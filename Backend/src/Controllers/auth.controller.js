@@ -63,9 +63,7 @@ async function UserLoginController(req, res) {
     });
   }
 
-  const isPasswordValid = await bcrypt.compare(
-    password , isUserExists.password,
-  );
+  const isPasswordValid = await bcrypt.compare(password, isUserExists.password);
 
   if (!isPasswordValid) {
     return res.status(400).json({
@@ -95,4 +93,33 @@ async function UserLoginController(req, res) {
   });
 }
 
-module.exports = { UserRegisterController ,UserLoginController };
+async function GetmeController(req, res) {
+  const userId = req.user.id;
+
+  const user = await UserModel.findById(userId);
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  res.status(200).json({
+    message: "User details fetched successfully",
+    user,
+  });
+}
+
+async function logoutController(req, res) {
+  const token = req.cookies.token;
+  res.clearCookie("token");
+
+  // await redis.set(token , Date.now().toString()  , "EX" , 60*60);
+
+  res.status(200).json({ message: "User logged out successfully" });
+}
+
+module.exports = {
+  UserRegisterController,
+  UserLoginController,
+  GetmeController,
+  logoutController,
+};
