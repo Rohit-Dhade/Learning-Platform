@@ -24,6 +24,7 @@ const LoginAndRegister = () => {
 
     if (mode === "login") {
       await handlelogin(formData.email, formData.password);
+      
       navigate("/");
     }
 
