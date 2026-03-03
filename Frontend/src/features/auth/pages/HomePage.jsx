@@ -68,6 +68,10 @@ export default function App() {
   const handleAuth = (e) => {
     e.preventDefault();
     handleSubmit(e);
+
+
+
+
   };
 
   const handleLogout = () => {
