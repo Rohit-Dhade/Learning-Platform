@@ -1,50 +1,34 @@
 import { useState, useEffect } from "react";
 import "../../../index.css";
 import { useAuth } from "../hook/useAuth";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
+import { all_courses } from "../../courses/services/course.api";
+import CoursePage from "../../courses/pages/CoursePage";
 
-const courses = [
+const cl = [
   {
-    icon: "⚛️",
-    title: "React Mastery",
-    level: "Intermediate",
-    lessons: 42,
-    color: "from-cyan-400 to-blue-500",
+    icon: "⚡",
+    color: "from-gray-700 to-black",
   },
   {
-    icon: "🐍",
-    title: "Python Fundamentals",
-    level: "Beginner",
-    lessons: 38,
-    color: "from-yellow-400 to-orange-500",
+    icon: "🤖",
+    color: "from-indigo-400 to-blue-600",
   },
   {
-    icon: "🎨",
-    title: "UI/UX Design",
-    level: "Beginner",
-    lessons: 29,
-    color: "from-pink-400 to-rose-500",
+    icon: "🧠",
+    color: "from-purple-500 to-indigo-600",
   },
   {
-    icon: "🛢️",
-    title: "Database Systems",
-    level: "Advanced",
-    lessons: 51,
-    color: "from-emerald-400 to-teal-500",
+    icon: "🔬",
+    color: "from-green-400 to-emerald-600",
   },
   {
-    icon: "☁️",
-    title: "Cloud Computing",
-    level: "Intermediate",
-    lessons: 36,
-    color: "from-violet-400 to-purple-500",
+    icon: "🧠",
+    color: "from-cyan-400 to-indigo-500",
   },
   {
-    icon: "🔐",
-    title: "Cybersecurity",
-    level: "Advanced",
-    lessons: 44,
-    color: "from-red-400 to-pink-500",
+    icon: "🛠️",
+    color: "from-blue-400 to-sky-600",
   },
 ];
 
@@ -55,12 +39,16 @@ const stats = [
   { value: "24/7", label: "Support" },
 ];
 
+
+
 export default function App() {
-  const [showModal, setShowModal] = useState(null); // 'login' | 'register' | null
+  const [showModal, setShowModal] = useState(null); 
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [activeNav, setActiveNav] = useState("Home");
+  const [courses, setcourses] = useState([]);
 
-  const { handlelogin, handleregister, loading, user ,handlelogout} = useAuth();
+  const { handlelogin, handleregister, loading, user, handlelogout } =
+    useAuth();
   const navigate = useNavigate();
 
   const isLoggedIn = !!user;
@@ -68,10 +56,6 @@ export default function App() {
   const handleAuth = (e) => {
     e.preventDefault();
     handleSubmit(e);
-
-
-
-
   };
 
   const handleLogout = () => {
@@ -92,10 +76,21 @@ export default function App() {
     setShowModal(null);
 
     navigate("/");
-
   };
 
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      const data = await all_courses();
+      setcourses(data);
+    };
+
+    fetchCourses();
+  }, []);
+
   return (
+    <>
+    
     <div className="no-scrollbar min-h-screen bg-slate-950 text-white font-sans overflow-x-hidden">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
@@ -258,34 +253,36 @@ export default function App() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {courses.map((course) => (
-              <div
-                key={course.title}
-                className="card-hover bg-white/3 border border-white/5 rounded-2xl p-6 cursor-pointer group"
-              >
+            {courses &&
+              courses.map((course, index) => (
                 <div
-                  className={`w-12 h-12 rounded-xl bg-gradient-to-br ${course.color} flex items-center justify-center text-xl mb-5`}
+                  key={course.title}
+                  className="card-hover bg-white/3 border border-white/5 rounded-2xl p-6 cursor-pointer group"
+                  onClick={()=>navigate(`/course/${course._id}`)}
                 >
-                  {course.icon}
-                </div>
-                <h3 className="syne text-lg font-bold mb-2 group-hover:text-indigo-300 transition-colors">
-                  {course.title}
-                </h3>
-                <p className="text-slate-500 text-sm mb-4">
-                  {course.lessons} lessons · {course.level}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span
-                    className={`text-xs font-semibold px-3 py-1 rounded-full bg-gradient-to-r ${course.color} bg-opacity-10 text-white/80`}
+                  <div
+                    className={`w-12 h-12 rounded-xl bg-gradient-to-br ${cl[index].color}  flex items-center justify-center text-xl mb-5`}
                   >
-                    {course.level}
-                  </span>
-                  <button className="text-sm text-slate-400 group-hover:text-white transition-colors">
-                    Enroll →
-                  </button>
+                    {cl[index].icon}
+                  </div>
+                  <h3 className="syne text-lg font-bold mb-2 group-hover:text-indigo-300 transition-colors">
+                    {course.title}
+                  </h3>
+                  <p className="text-slate-500 text-sm mb-4">
+                    {course.lessons} lessons · {course.level}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span
+                      className={`text-xs font-semibold px-3 py-1 rounded-full bg-gradient-to-r ${course.color} bg-opacity-10 text-white/80`}
+                    >
+                      {course.level}
+                    </span>
+                    <button className="text-sm text-slate-400 group-hover:text-white transition-colors">
+                      Enroll →
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </section>
@@ -443,5 +440,6 @@ export default function App() {
         </div>
       )}
     </div>
+    </>
   );
 }

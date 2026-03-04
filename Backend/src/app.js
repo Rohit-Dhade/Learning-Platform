@@ -2,11 +2,11 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 const authRouter = require("./routes/auth.route");
-// const userRouter = require('./routes/user.route')
+const courseRouter = require("./routes/course.route");
 const cookieparser = require("cookie-parser");
-app.use(cookieparser())
+app.use(cookieparser());
 
-const cors = require('cors');
+const cors = require("cors");
 app.use(
   cors({
     credentials: true,
@@ -14,13 +14,13 @@ app.use(
   }),
 );
 
-app.get('/' ,(req, res)=>{
-    return res.status(200).json({
-        message : "this is home end point"
-    })
-})
+app.get("/", (req, res) => {
+  return res.status(200).json({
+    message: "this is home end point",
+  });
+});
 
 app.use("/api/user", authRouter);
-// app.use('/api/user' , userRouter)
+app.use("/api/course", courseRouter);
 
 module.exports = app;
